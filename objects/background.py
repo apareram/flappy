@@ -1,29 +1,33 @@
-# Importar las bibliotecas necesarias
-import pygame.sprite  # Importa la clase Sprite de pygame
+import pygame.sprite
+import random
+import assets
+import configs
+from layer import Layer
 
-import assets          # Importa un módulo llamado assets
-import configs         # Importa un módulo llamado configs
-from layer import Layer  # Importa la clase Layer del módulo layer
-
-# Definir la clase Background que hereda de pygame.sprite.Sprite
 class Background(pygame.sprite.Sprite):
     def __init__(self, index, *groups):
-        # Capa de renderizado para el fondo
         self._layer = Layer.BACKGROUND
-        
-        # Obtiene la imagen de fondo desde el módulo assets
-        self.image = assets.get_sprite("background")
-        
-        # Configura el rectángulo del fondo en la parte superior izquierda de la pantalla
+        self.images = {
+            "day": [
+                assets.get_sprite("background-day"),
+            ],
+            "night": [
+                assets.get_sprite("background-night"),
+            ]
+        }
+        self.time_of_day = random.choice(list(self.images.keys()))
+        self.image_index = 0
+        self.image = self.images[self.time_of_day][self.image_index]
         self.rect = self.image.get_rect(topleft=(configs.SCREEN_WIDTH * index, 0))
-        
-        # Llama al constructor de la clase base
+        self.cycle_timer = pygame.time.get_ticks()
+        self.cycle_interval = 5000  # Interval to switch between day and night (5 seconds)
         super().__init__(*groups)
-    
-    def update(self):
-        # Mueve el fondo hacia la izquierda
-        self.rect.x -= 1
 
-        # Reincia la posición del fondo cuando sale completamente de la pantalla
-        if self.rect.right <= 0:
-            self.rect.x = configs.SCREEN_WIDTH
+    def update(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.cycle_timer > self.cycle_interval:
+            # Switch between day and night
+            self.time_of_day = "day" if self.time_of_day == "night" else "night"
+            self.image_index = 0
+            self.image = self.images[self.time_of_day][self.image_index]
+            self.cycle_timer = current_time
