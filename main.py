@@ -5,6 +5,7 @@ import configs             # Importa el módulo configs
 from objects.background import Background  # Importa la clase Background desde el módulo objects.background
 from objects.floor import Floor            # Importa la clase Floor desde el módulo objects.floor
 from objects.pipe import Pipe              # Importa la clase Pipe desde el módulo objects.pipe
+from objects.bird import Bird
 
 # Inicializa Pygame
 pygame.init()
@@ -32,6 +33,8 @@ Background(0, sprites)
 Background(1, sprites)
 Floor(0, sprites)
 Floor(1, sprites)
+
+bird = Bird(sprites)
 
 # Configura un temporizador para crear tuberías cada 1.5 segundos
 pygame.time.set_timer(pipe_create_event, 1500)
