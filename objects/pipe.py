@@ -3,10 +3,13 @@ import random
 
 import assets
 import configs
+from layer import Layer
 
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, *groups):
         self.gap = 100 
+
+        self._layer = Layer.OBSTACLE
 
         self.sprite = assets.get_sprite("pipe-green")
         self.sprite_rect = self.sprite.get_rect()

@@ -6,8 +6,6 @@ from objects.background import Background
 from objects.floor import Floor
 from objects.pipe import Pipe
 
-
-
 pygame.init()
 
 screen = pygame.display.set_mode((configs.SCREEN_WIDTH, configs.SCREEN_HEIGHT))
