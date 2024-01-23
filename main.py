@@ -7,6 +7,10 @@ from objects.bird import Bird
 from objects.background import Background
 from objects.floor import Floor
 from objects.pipe import Pipe
+from objects.gameover_message import GameOverMessage
+from objects.gamestart_message import GameStartMessage
+
+
 
 def main():
     pygame.init()
@@ -16,6 +20,7 @@ def main():
     pipe_create_event = pygame.USEREVENT
     running = True
     gameover = False
+    gamestarted = False
     score = 0
 
     assets.load_sprites()
@@ -29,11 +34,9 @@ def main():
         Floor(0, sprites)
         Floor(1, sprites)
 
-        return Bird(sprites)
+        return Bird(sprites), GameStartMessage(sprites)
 
-    bird = create_sprites()
-
-    pygame.time.set_timer(pipe_create_event, 1500)
+    bird, game_start_message = create_sprites()
 
     while running:
         for event in pygame.event.get():
@@ -41,17 +44,30 @@ def main():
                 running = False
             if event.type == pipe_create_event:
                 Pipe(sprites)
-
-            bird.handle_event(event)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and not gamestarted and not gameover:
+                    gamestarted = True
+                    game_start_message.kill()
+                    pygame.time.set_timer(pipe_create_event, 1500)
+                if event.key == pygame.K_ESCAPE and gameover:
+                    gameover = False
+                    gamestarted = False
+                    sprites.empty()
+                    bird, game_start_message = create_sprites()
+            if not gameover:
+                bird.handle_event(event)
 
         screen.fill(0)
-
         sprites.draw(screen)
+
         if not gameover:
             sprites.update()
 
         if bird.check_collision(sprites):
             gameover = True
+            gamestarted = False
+            GameOverMessage(sprites)
+            pygame.time.set_timer(pipe_create_event, 0)
 
         for sprite in sprites:
             if type(sprite) is Pipe and sprite.is_passed():
