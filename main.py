@@ -9,8 +9,7 @@ from objects.floor import Floor
 from objects.pipe import Pipe
 from objects.gameover_message import GameOverMessage
 from objects.gamestart_message import GameStartMessage
-
-
+from objects.score import Score
 
 def main():
     pygame.init()
@@ -21,9 +20,9 @@ def main():
     running = True
     gameover = False
     gamestarted = False
-    score = 0
 
     assets.load_sprites()
+    assets.load_audios()
 
     sprites = pygame.sprite.LayeredUpdates()
 
@@ -34,9 +33,9 @@ def main():
         Floor(0, sprites)
         Floor(1, sprites)
 
-        return Bird(sprites), GameStartMessage(sprites)
+        return Bird(sprites), GameStartMessage(sprites), Score (sprites)
 
-    bird, game_start_message = create_sprites()
+    bird, game_start_message, score = create_sprites()
 
     while running:
         for event in pygame.event.get():
@@ -53,7 +52,7 @@ def main():
                     gameover = False
                     gamestarted = False
                     sprites.empty()
-                    bird, game_start_message = create_sprites()
+                    bird, game_start_message, score = create_sprites()
             if not gameover:
                 bird.handle_event(event)
 
@@ -63,15 +62,17 @@ def main():
         if not gameover:
             sprites.update()
 
-        if bird.check_collision(sprites):
+        if bird.check_collision(sprites) and not gameover:
             gameover = True
             gamestarted = False
             GameOverMessage(sprites)
             pygame.time.set_timer(pipe_create_event, 0)
+            assets.play_audio("hit")
 
         for sprite in sprites:
             if type(sprite) is Pipe and sprite.is_passed():
-                score += 1
+                score.value += 1
+                assets.play_audio("point")
 
         pygame.display.flip()
         clock.tick(configs.FPS)
