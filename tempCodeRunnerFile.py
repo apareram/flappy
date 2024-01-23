@@ -15,8 +15,6 @@ def main():
     clock = pygame.time.Clock()
     pipe_create_event = pygame.USEREVENT
     running = True
-    gameover = False
-    score = 0
 
     assets.load_sprites()
 
@@ -41,21 +39,17 @@ def main():
                 running = False
             if event.type == pipe_create_event:
                 Pipe(sprites)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    # Iniciar un nuevo juego
+                    sprites.empty()  # Limpiar todos los sprites
 
             bird.handle_event(event)
 
         screen.fill(0)
 
         sprites.draw(screen)
-        if not gameover:
-            sprites.update()
-
-        if bird.check_collision(sprites):
-            gameover = True
-
-        for sprite in sprites:
-            if type(sprite) is Pipe and sprite.is_passed():
-                score += 1
+        sprites.update()
 
         pygame.display.flip()
         clock.tick(configs.FPS)

@@ -17,6 +17,8 @@ class Floor(pygame.sprite.Sprite):
         # Configura el rectángulo del suelo en la parte inferior de la pantalla
         self.rect = self.image.get_rect(bottomleft=(configs.SCREEN_WIDTH * index, configs.SCREEN_HEIGHT))
         
+        self.mask = pygame.mask.from_surface(self.image)
+
         # Llama al constructor de la clase base
         super().__init__(*groups)
     

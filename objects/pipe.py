@@ -40,6 +40,10 @@ class Pipe(pygame.sprite.Sprite):
         # Configura el rectángulo de las tuberías
         self.rect = self.image.get_rect(midleft=(configs.SCREEN_WIDTH, random.uniform(min_y, max_y)))
 
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.passed = False
+
         # Llama al constructor de la clase base
         super().__init__(*groups)
     
@@ -50,3 +54,9 @@ class Pipe(pygame.sprite.Sprite):
         # Elimina la tubería cuando sale completamente de la pantalla
         if self.rect.right <= 0:
             self.kill()
+
+    def is_passed(self):
+        if self.rect.x < 50 and not self.passed:
+            self.passed = True
+            return True
+        return False

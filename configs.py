@@ -6,3 +6,5 @@ SCREEN_HEIGHT = 512
 
 # Fotogramas por segundo (FPS) del juego
 FPS = 60
+
+GRAVITY = 0.4
