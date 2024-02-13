@@ -1,1 +1,1 @@
-GameStartMessage
+True
