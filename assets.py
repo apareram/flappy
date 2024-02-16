@@ -1,35 +1,33 @@
-# Importar las bibliotecas necesarias
-import os       # Importa el módulo os para trabajar con rutas de archivos
-import pygame   # Importa la biblioteca pygame para cargar imágenes
+import os
+import pygame
+import sys
 
-# Un diccionario para almacenar los sprites cargados
+# Determine the correct assets directory path
+if getattr(sys, 'frozen', False):
+    # The application is frozen (running as an executable)
+    assets_dir = os.path.join(sys._MEIPASS, 'assets')
+else:
+    # The application is not frozen (running as a script)
+    assets_dir = 'assets'
+
 sprites = {}
 audios = {}
 
-# Una función para cargar los sprites desde una carpeta específica
 def load_sprites():
-    # Ruta de la carpeta que contiene los sprites
-    path = os.path.join("assets", "sprites")
-
-    # Itera a través de los archivos en la carpeta
+    # Use assets_dir to construct the path to the sprites directory
+    path = os.path.join(assets_dir, 'sprites')
     for file in os.listdir(path):
-        # Obtiene el nombre del archivo sin la extensión y lo utiliza como clave
-        # Luego, carga la imagen correspondiente en el diccionario de sprites
-        sprites[file.split('.')[0]] = pygame.image.load(os.path.join(path, file))
+        name = file.split('.')[0]
+        sprites[name] = pygame.image.load(os.path.join(path, file))
 
-# Una función para obtener un sprite por su nombre
 def get_sprite(name):
-    if name in sprites:
-        return sprites[name]
-    else:
-        print(f"Error: Sprite '{name}' not found.")
-        return pygame.Surface((0, 0))  # Return an empty surface as a placeholder
-
+    return sprites[name]
 
 def load_audios():
-    path = os.path.join("assets", "audios")
+    path = os.path.join(assets_dir, 'audios')
     for file in os.listdir(path):
-        audios[file.split('.')[0]] = pygame.mixer.Sound(os.path.join(path, file))
+        name = file.split('.')[0]
+        audios[name] = pygame.mixer.Sound(os.path.join(path, file))
 
 def play_audio(name):
     audios[name].play()
