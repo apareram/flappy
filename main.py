@@ -26,14 +26,26 @@ def main():
 
     sprites = pygame.sprite.LayeredUpdates()
 
-    # Crear el fondo al inicio del juego
+    def load_highscore():
+        try:
+            with open('highscore.txt', 'r') as file:
+                return int(file.read())
+        except FileNotFoundError:
+            return 0
+
+    def save_highscore(score):
+        with open('highscore.txt', 'w') as file:
+            file.write(str(score))
+
+    highscore = load_highscore()
+
     def create_sprites():
         Background(0, sprites)
         Background(1, sprites)
         Floor(0, sprites)
         Floor(1, sprites)
 
-        return Bird(sprites), GameStartMessage(sprites), Score (sprites)
+        return Bird(sprites), GameStartMessage(sprites), Score(highscore, sprites)
 
     bird, game_start_message, score = create_sprites()
 
@@ -48,11 +60,13 @@ def main():
                     gamestarted = True
                     game_start_message.kill()
                     pygame.time.set_timer(pipe_create_event, 1500)
-                if event.key == pygame.K_ESCAPE and gameover:
+                if event.key == pygame.K_ESCAPE:
                     gameover = False
                     gamestarted = False
                     sprites.empty()
-                    bird, game_start_message, score = create_sprites()
+                    bird, game_start_message, score = create_sprites()  # Update the score variable to reference the new Score object
+                    score.value = 0  # Reset the current score
+                    score.highscore = load_highscore()  # Update the high score from the file
             if not gameover:
                 bird.handle_event(event)
 
@@ -68,6 +82,10 @@ def main():
             GameOverMessage(sprites)
             pygame.time.set_timer(pipe_create_event, 0)
             assets.play_audio("hit")
+
+            if score.value > highscore:
+                highscore = score.value
+                save_highscore(highscore)
 
         for sprite in sprites:
             if type(sprite) is Pipe and sprite.is_passed():

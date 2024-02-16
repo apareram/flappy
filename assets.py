@@ -19,7 +19,12 @@ def load_sprites():
 
 # Una función para obtener un sprite por su nombre
 def get_sprite(name):
-    return sprites[name]
+    if name in sprites:
+        return sprites[name]
+    else:
+        print(f"Error: Sprite '{name}' not found.")
+        return pygame.Surface((0, 0))  # Return an empty surface as a placeholder
+
 
 def load_audios():
     path = os.path.join("assets", "audios")
